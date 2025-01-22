@@ -1,0 +1,66 @@
+/* General Styles */
+body {
+    background-color: #FAF6E3;
+    font-family: Arial, sans-serif;
+    color: #2A3663;
+}
+
+/* Hero Section */
+.hero-section {
+    background-color: #2A3663;
+    color: #FAF6E3;
+    padding: 60px 0;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+    margin: 10px auto;
+    max-width: 600px;
+}
+
+.hero-section .btn {
+    background-color: #D8DBBD;
+    color: #2A3663;
+    border: none;
+}
+
+.hero-section .btn:hover {
+    background-color: #2A3663;
+    color: #FAF6E3;
+}
+
+/* Services Section */
+.service-card {
+    background-color: #D8DBBD;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-img {
+    height: 150px;
+    object-fit: contain;
+}
+
+.service-card h4 {
+    color: #2A3663;
+    margin-bottom: 10px;
+}
+
+/* Map Section */
+#map {
+    border: 2px solid #2A3663;
+    border-radius: 5px;
+}
+
+/* Footer */
+footer {
+    background-color: #2A3663;
+    color: #FAF6E3;
+    padding: 20px 0;
+    margin-top: 40px;
+}
