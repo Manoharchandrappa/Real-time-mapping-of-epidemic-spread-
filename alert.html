@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Alert System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #FAF6E3;
+            color: #2A3663;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #D8DBBD;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2A3663;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #D8DBBD;
+            border-radius: 5px;
+        }
+
+        .alert {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2A3663;
+            color: #FAF6E3;
+            border-radius: 5px;
+        }
+
+        .alert h3 {
+            margin: 0;
+        }
+
+        .alert p {
+            margin: 10px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>City Alert System</h1>
+        <form id="cityAlertForm">
+            <div class="form-group">
+                <label for="city">Select Your City:</label>
+                <select id="city" required>
+                    <option value="" disabled selected>Select a city</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Kolkata">Kolkata</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Alert</button>
+        </form>
+        <div id="alert" class="alert" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById("cityAlertForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const city = document.getElementById("city").value;
+
+            // Fetch alert data for the selected city
+            fetch(`/alert-data?city=${city}`)
+                .then(response => response.json())
+                .then(data => {
+                    const alertDiv = document.getElementById("alert");
+                    alertDiv.style.display = "block";
+                    alertDiv.innerHTML = `
+                        <h3>${data.city} Alert</h3>
+                        <p><strong>Current Infections:</strong> ${data.current_infected}</p>
+                        <p><strong>Deaths:</strong> ${data.deaths}</p>
+                        <p><strong>Recovery Rate:</strong> ${data.recovery_rate}%</p>
+                        <p><strong>Risk Level:</strong> ${data.risk_level}</p>
+                        <p>${data.advisory}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error("Error fetching alert data:", error);
+                });
+        });
+    </script>
+</body>
+</html>

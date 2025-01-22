@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epidemic Predictions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #FAF6E3;
+            background-image: url('{{ url_for("static", filename="images/background.png.jpg") }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            background-color: #D8DBBD;
+            width: 50%;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2A3663;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #2A3663;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #2A3663;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #2A3663;
+            color: #FAF6E3;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1F2A52;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #2A3663;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Epidemic Predictions</h1>
+        <label for="city">Select Your City</label>
+        <select id="city">
+            <option value="Bangalore">Bangalore</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Hyderabad">Hyderabad</option>
+        </select>
+        <button id="predictButton">Get Predictions</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("predictButton").addEventListener("click", function() {
+            const city = document.getElementById("city").value;
+
+            fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ city: city })
+            })
+            .then(response => response.json())
+            .then(result => {
+                const resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = `
+                    <h3>Prediction Results for ${city}</h3>
+                    <p><strong>Next Likely City:</strong> ${result.next_likely_city}</p>
+                    <p><strong>Current Risk Level:</strong> ${result.current_risk_level}</p>
+                    <p><strong>Second Wave Risk:</strong> ${result.second_wave_risk}</p>
+                    <p>${result.advisory}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerText = "Error fetching predictions.";
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
