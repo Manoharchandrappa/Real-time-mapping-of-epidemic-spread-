@@ -1,0 +1,61 @@
+from flask import Flask, render_template, request, jsonify
+import pandas as pd
+import pickle
+import numpy as np
+
+app = Flask(__name__)
+
+# Load epidemic data
+try:
+    epidemic_data = pd.read_csv("epidemic_data.csv")
+except FileNotFoundError:
+    epidemic_data = pd.DataFrame()
+
+# Load the prediction model
+try:
+    with open("epidemic_model.pkl", "rb") as model_file:
+        model = pickle.load(model_file)
+except (FileNotFoundError, EOFError) as e:
+    print(f"Error loading model: {e}")
+    model = None
+
+
+@app.route("/")
+def index():
+    """Render the homepage."""
+    return render_template("index.html")
+
+
+@app.route("/map-data")
+def map_data():
+    """Provide map data."""
+    if epidemic_data.empty:
+        return jsonify({"error": "No data available"}), 500
+
+    map_data = epidemic_data[[
+        "location", "current_infected", "deaths", "recovery_rate", "latitude", "longitude"
+    ]].to_dict(orient="records")
+    return jsonify(map_data)
+
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    """Handle prediction requests."""
+    if not model:
+        return jsonify({"error": "Model not loaded. Please check the files."}), 500
+
+    try:
+        data = request.json
+        features = np.array([[data["current_infected"], data["cumulative_infected"], data["new_infected"],
+                              data["deaths"], data["recovered"], data["recovery_rate"],
+                              data["mortality_rate"], data["population_impact_percentage"]]])
+        prediction = model.predict(features)
+        result = "India" if prediction[0] == 1 else "International"
+        return jsonify({"prediction": result})
+    except Exception as e:
+        print(f"Error during prediction: {e}")
+        return jsonify({"error": "An error occurred during prediction."}), 500
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
